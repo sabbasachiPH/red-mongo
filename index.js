@@ -10,7 +10,10 @@ app.use(bodyParser.json());
 
 //DATABASE CONNECTION
 const uri = process.env.DB_PATH;
-let client = new MongoClient(uri, { useNewUrlParser: true });
+let client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // client.connect((err) => {
 //   const collection = client.db("redOnion").collection("allMenu");
@@ -25,7 +28,10 @@ let client = new MongoClient(uri, { useNewUrlParser: true });
 
 //GET
 app.get("/showAllmenu", (req, res) => {
-  let client = new MongoClient(uri, { useNewUrlParser: true });
+  let client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
   client.connect((err) => {
     const collection = client.db("redOnion").collection("allMenu");
     collection.find().toArray((err, documents) => {
