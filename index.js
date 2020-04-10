@@ -44,9 +44,34 @@ app.get("/showAllmenu", (req, res) => {
     });
   });
 
-  console.log("Database Connected ...");
+  console.log("Database showAllMenu Connected ...");
   client.close();
   //   res.send("Thankyou for calling me");
+});
+
+//GET single Item By _id
+app.get("/allMenu/:id", (req, res) => {
+  const id = req.params.id;
+  console.log("id from url = ", id, req.params);
+  let client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((error) => {
+    const collection = client.db("redOnion").collection("allMenu");
+
+    collection.find({ id }).toArray((err, documents) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(documents[0]);
+        console.log(documents[0]);
+      }
+    });
+  });
+  console.log("Database showMenuBy Id Connected ...");
+  client.close();
 });
 
 //POST
@@ -63,11 +88,11 @@ app.post("/addMenu", (req, res) => {
         res.send(result.ops[0]);
       }
     });
-    console.log("Database Connected ...");
+    // console.log("Database addMenu Connected ...");
     client.close();
   });
-  console.log("Post Req Send");
-  console.log("Data Received", req.body);
+  // console.log("Post Req Send");
+  // console.log("Data Received", req.body);
 });
 
 const port = process.env.PORT || 4200;
