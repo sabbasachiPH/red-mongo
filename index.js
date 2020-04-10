@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
 require("dotenv").config();
+const ObjectId = require("mongodb").ObjectId;
 
 const app = express();
 app.use(cors());
@@ -52,7 +53,7 @@ app.get("/showAllmenu", (req, res) => {
 //GET single Item By _id
 app.get("/allMenu/:id", (req, res) => {
   const id = req.params.id;
-  console.log("id from url = ", id, req.params);
+  console.log("id from url = ", id, typeof id, req.params, typeof req.params);
   let client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -60,7 +61,7 @@ app.get("/allMenu/:id", (req, res) => {
   client.connect((error) => {
     const collection = client.db("redOnion").collection("allMenu");
 
-    collection.find({ id }).toArray((err, documents) => {
+    collection.find({ _id: ObjectId(id) }, id).toArray((err, documents) => {
       if (err) {
         console.log(err);
         res.status(500).send({ message: err });
