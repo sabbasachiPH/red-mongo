@@ -16,14 +16,25 @@ let client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 
+// client.connect((err) => {
+//   const collection = client.db("redOnion").collection("allMenu");
+
+//   try {
+//     collection.insertOne({});
+//   } catch (e) {
+//     print(e);
+//   }
+//   client.close();
+// });
+
 //GET
-app.get("/showAllAppointments", (req, res) => {
+app.get("/showAllmenu", (req, res) => {
   let client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
   client.connect((err) => {
-    const collection = client.db("doctor-portal").collection("appointment");
+    const collection = client.db("redOnion").collection("allMenu");
     collection.find().toArray((err, documents) => {
       if (err) {
         console.log(err);
@@ -34,21 +45,43 @@ app.get("/showAllAppointments", (req, res) => {
     });
   });
 
-  console.log("Database showAllAppointments Connected ...");
+  console.log("Database showAllMenu Connected ...");
   client.close();
   //   res.send("Thankyou for calling me");
 });
 
-//POST
-app.post("/addAppointment", (req, res) => {
-  const serviceDetail = req.body;
+//GET single Item By _id
+app.get("/allMenu/:id", (req, res) => {
+  const id = req.params.id;
+  console.log("id from url = ", id, typeof id, req.params, typeof req.params);
   let client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
+  client.connect((error) => {
+    const collection = client.db("redOnion").collection("allMenu");
+
+    collection.find({ _id: ObjectId(id) }, id).toArray((err, documents) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(documents[0]);
+        console.log(documents[0]);
+      }
+    });
+  });
+  console.log("Database showMenuBy Id Connected ...");
+  client.close();
+});
+
+//POST
+app.post("/addMenu", (req, res) => {
+  const menuDetail = req.body;
+  let client = new MongoClient(uri, { useNewUrlParser: true });
   client.connect((err) => {
-    const collection = client.db("doctor-portal").collection("appointment");
-    collection.insertOne(serviceDetail, (err, result) => {
+    const collection = client.db("redOnion").collection("allMenu");
+    collection.insertOne(menuDetail, (err, result) => {
       if (err) {
         console.log(err);
         res.status(500).send({ message: err });
@@ -56,12 +89,12 @@ app.post("/addAppointment", (req, res) => {
         res.send(result.ops[0]);
       }
     });
-    console.log("Database addService Connected ...");
-    //client.close();
+    // console.log("Database addMenu Connected ...");
+    client.close();
   });
-  console.log("Post Req Send");
-  console.log("Data Received", req.body);
+  // console.log("Post Req Send");
+  // console.log("Data Received", req.body);
 });
 
 const port = process.env.PORT || 4200;
-app.listen(port, () => console.log("Listening from port 4200 ...."));
+app.listen(port, () => console.log("Listening from prot 4200 ...."));
