@@ -16,17 +16,6 @@ let client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 
-// client.connect((err) => {
-//   const collection = client.db("redOnion").collection("allMenu");
-
-//   try {
-//     collection.insertOne({});
-//   } catch (e) {
-//     print(e);
-//   }
-//   client.close();
-// });
-
 //GET
 app.get("/showAllAppointments", (req, res) => {
   let client = new MongoClient(uri, {
@@ -45,34 +34,9 @@ app.get("/showAllAppointments", (req, res) => {
     });
   });
 
-  console.log("Database showAllMenu Connected ...");
+  console.log("Database showAllAppointments Connected ...");
   client.close();
   //   res.send("Thankyou for calling me");
-});
-
-//GET single Item By _id
-app.get("/allMenu/:id", (req, res) => {
-  const id = req.params.id;
-  console.log("id from url = ", id, typeof id, req.params, typeof req.params);
-  let client = new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  client.connect((error) => {
-    const collection = client.db("redOnion").collection("allMenu");
-
-    collection.find({ _id: ObjectId(id) }, id).toArray((err, documents) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send({ message: err });
-      } else {
-        res.send(documents[0]);
-        console.log(documents[0]);
-      }
-    });
-  });
-  console.log("Database showMenuBy Id Connected ...");
-  client.close();
 });
 
 //POST
