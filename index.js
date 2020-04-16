@@ -96,5 +96,52 @@ app.post("/addMenu", (req, res) => {
   // console.log("Data Received", req.body);
 });
 
+//GET all appointment from
+app.get("/showAllAppointments", (req, res) => {
+  let client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("doctor-portal").collection("appointment");
+    collection.find().toArray((err, documents) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(documents);
+      }
+    });
+  });
+
+  console.log("Database showAllAppointments Connected ...");
+  client.close();
+  //   res.send("Thankyou for calling me");
+});
+
+//POST
+app.post("/addAppointment", (req, res) => {
+  const serviceDetail = req.body;
+  let client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("doctor-portal").collection("appointment");
+    collection.insertOne(serviceDetail, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(result.ops[0]);
+      }
+    });
+    console.log("Database addAppointment Connected ...");
+    // client.close();
+  });
+  console.log("Post Req Send");
+  console.log("Data Received", req.body);
+});
+
 const port = process.env.PORT || 4200;
 app.listen(port, () => console.log("Listening from prot 4200 ...."));
